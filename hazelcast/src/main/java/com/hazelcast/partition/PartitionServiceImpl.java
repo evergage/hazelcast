@@ -60,6 +60,7 @@ public class PartitionServiceImpl implements PartitionService, ManagedService,
     private final AtomicInteger replicaSyncProcessCount = new AtomicInteger();
     private final MigrationThread migrationThread;
     private final long partitionMigrationInterval;
+    private final long partitionMigrationDelay;
     private final long partitionMigrationTimeout;
     private final PartitionStateGenerator partitionStateGenerator;
     private final MemberGroupFactory memberGroupFactory;
@@ -103,6 +104,7 @@ public class PartitionServiceImpl implements PartitionService, ManagedService,
         partitionStateGenerator = new PartitionStateGeneratorImpl();
 
         partitionMigrationInterval = node.groupProperties.PARTITION_MIGRATION_INTERVAL.getLong() * 1000;
+        partitionMigrationDelay = node.groupProperties.PARTITION_MIGRATION_DELAY.getLong() * 1000;
         // partitionMigrationTimeout is 1.5 times of real timeout
         partitionMigrationTimeout = (long) (node.groupProperties.PARTITION_MIGRATION_TIMEOUT.getLong() * 1.5f);
 
@@ -249,6 +251,14 @@ public class PartitionServiceImpl implements PartitionService, ManagedService,
             updateMemberGroupsSize();
         }
         if (node.isMaster() && node.isActive()) {
+            if (partitionMigrationDelay > 0) {
+                try {
+                    logger.info("Waiting for " + partitionMigrationDelay + "ms before starting repartitioning after member " + member.toString() + " got added to the cluster.");
+                    Thread.sleep(partitionMigrationDelay);
+                } catch (InterruptedException e) {
+                    logger.warning("Exception while trying to sleep " + partitionMigrationDelay + "ms before starting repartitioning after member " + member.toString() + " got added to the cluster.");
+                }
+            }
             lock.lock();
             try {
                 clearMigrationQueue();

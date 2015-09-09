@@ -69,6 +69,7 @@ public class GroupProperties {
     public static final String PROP_CONNECTION_MONITOR_INTERVAL = "hazelcast.connection.monitor.interval";
     public static final String PROP_CONNECTION_MONITOR_MAX_FAULTS = "hazelcast.connection.monitor.max.faults";
     public static final String PROP_PARTITION_MIGRATION_INTERVAL = "hazelcast.partition.migration.interval";
+    public static final String PROP_PARTITION_MIGRATION_DELAY = "hazelcast.partition.migration.delay";
     public static final String PROP_PARTITION_MIGRATION_TIMEOUT = "hazelcast.partition.migration.timeout";
     public static final String PROP_PARTITION_MIGRATION_ZIP_ENABLED = "hazelcast.partition.migration.zip.enabled";
     public static final String PROP_PARTITION_TABLE_SEND_INTERVAL = "hazelcast.partition.table.send.interval";
@@ -179,6 +180,8 @@ public class GroupProperties {
 
     public final GroupProperty PARTITION_MIGRATION_INTERVAL;
 
+    public final GroupProperty PARTITION_MIGRATION_DELAY;
+
     public final GroupProperty PARTITION_MIGRATION_TIMEOUT;
 
     public final GroupProperty PARTITION_MIGRATION_ZIP_ENABLED;
@@ -258,6 +261,7 @@ public class GroupProperties {
         CONNECTION_MONITOR_INTERVAL = new GroupProperty(config, PROP_CONNECTION_MONITOR_INTERVAL, "100");
         CONNECTION_MONITOR_MAX_FAULTS = new GroupProperty(config, PROP_CONNECTION_MONITOR_MAX_FAULTS, "3");
         PARTITION_MIGRATION_INTERVAL = new GroupProperty(config, PROP_PARTITION_MIGRATION_INTERVAL, "0");
+        PARTITION_MIGRATION_DELAY = new GroupProperty(config, PROP_PARTITION_MIGRATION_DELAY, "0");
         PARTITION_MIGRATION_TIMEOUT = new GroupProperty(config, PROP_PARTITION_MIGRATION_TIMEOUT, "300");
         PARTITION_MIGRATION_ZIP_ENABLED = new GroupProperty(config, PROP_PARTITION_MIGRATION_ZIP_ENABLED, "true");
         PARTITION_TABLE_SEND_INTERVAL = new GroupProperty(config, PROP_PARTITION_TABLE_SEND_INTERVAL, "15");
