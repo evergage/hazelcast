@@ -77,6 +77,7 @@ public class PartitionDistributionTest extends HazelcastTestSupport {
     private void testPartitionDistribution(final int partitionCount, final int nodeCount) throws InterruptedException {
         final Config config = new Config();
         config.setProperty(GroupProperties.PROP_PARTITION_COUNT, String.valueOf(partitionCount));
+        config.setProperty(GroupProperties.PROP_PARTITION_MIGRATION_DELAY, "4");
         TestHazelcastInstanceFactory factory = createHazelcastInstanceFactory(nodeCount);
         final BlockingQueue<Integer> counts = new ArrayBlockingQueue<Integer>(nodeCount);
         final HazelcastInstance[] instances = new HazelcastInstance[nodeCount];

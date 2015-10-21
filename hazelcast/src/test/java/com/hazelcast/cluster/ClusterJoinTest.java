@@ -268,6 +268,43 @@ public class ClusterJoinTest {
     }
 
     @Test
+    public void testDelayedPartitioningAfterJoin() throws Exception {
+        Config config1 = new Config();
+        config1.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(true);
+        config1.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(false);
+        config1.setProperty("hazelcast.partition.migration.delay", "4");
+
+        HazelcastInstance h1 = Hazelcast.newHazelcastInstance(config1);
+
+        Thread.sleep(4000);
+
+        Config config2 = new Config();
+        config2.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(true);
+        config2.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(false);
+        config2.setProperty("hazelcast.partition.migration.delay", "4");
+        HazelcastInstance h2 = Hazelcast.newHazelcastInstance(config2);
+
+        final int s1 = h1.getCluster().getMembers().size();
+        final int s2 = h2.getCluster().getMembers().size();
+        assertEquals(2, s1);
+        assertEquals(2, s2);
+        String h1UUID = h1.getCluster().getMembers().toArray(new Member[2])[0].getUuid();
+        String h2UUID = h1.getCluster().getMembers().toArray(new Member[2])[1].getUuid();
+        int numberOfH1Partitions = 0;
+        int numberOfH2Partitions = 0;
+        for (Partition partition : h1.getPartitionService().getPartitions()) {
+            if (partition.getOwner().getUuid().equals(h1UUID)) {
+                numberOfH1Partitions++;
+            }
+            if (partition.getOwner().getUuid().equals(h2UUID)) {
+                numberOfH2Partitions++;
+            }
+        }
+        assertTrue(numberOfH1Partitions <= (271 / 2) + 1 && numberOfH1Partitions >= 271 / 2);
+        assertTrue(numberOfH2Partitions <= (271 / 2) + 1 && numberOfH2Partitions >= 271 / 2);
+    }
+
+    @Test
     public void testTcpIpJoinWithIncompatiblePasswords() throws Exception {
         Config config1 = new Config();
         config1.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(false);
